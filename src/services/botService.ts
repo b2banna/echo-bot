@@ -3,26 +3,31 @@ import { ActivityHandler, MessageFactory, TurnContext } from 'botbuilder';
 export class BotService extends ActivityHandler {
   constructor() {
     super();
+    // onMessageHandler is called when a Member start a conversation with the bot.
+    this.onMembersAdded(this.onMembersAddedHandler);
 
-    this.onMembersAdded(async (context: TurnContext, next) => {
-      const membersAdded = context.activity.membersAdded || [];
-      const welcomeText = 'Hello and welcome!';
-      for (const member of membersAdded) {
-        if (member.id !== context.activity.recipient.id) {
-          await context.sendActivity(MessageFactory.text(welcomeText, welcomeText));
-        }
+    // onMessageHandler is called when a Member sends a message to the bot.
+    this.onMessage(this.onMessageHandler);
+  }
+
+  async onMembersAddedHandler(context: TurnContext, next: () => Promise<void>): Promise<void> {
+    const membersAdded = context.activity.membersAdded || [];
+    const welcomeText = 'Hello and welcome!';
+    for (const member of membersAdded) {
+      if (member.id !== context.activity.recipient.id) {
+        await context.sendActivity(MessageFactory.text(welcomeText, welcomeText));
       }
+    }
 
-      // By calling next() you ensure that the next BotHandler is run.
-      await next();
-    });
+    // By calling next() you ensure that the next BotHandler is run.
+    await next();
+  }
 
-    this.onMessage(async (context, next) => {
-      const replyText = `Echo: ${context.activity.text}`;
-      await context.sendActivity(MessageFactory.text(replyText, replyText));
+  async onMessageHandler(context: TurnContext, next: () => Promise<void>): Promise<void> {
+    const replyText = `Echo: ${context.activity.text}`;
+    await context.sendActivity(MessageFactory.text(replyText, replyText));
 
-      // By calling next() you ensure that the next BotHandler is run.
-      await next();
-    });
+    // By calling next() you ensure that the next BotHandler is run.
+    await next();
   }
 }

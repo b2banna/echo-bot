@@ -4,7 +4,7 @@ import cors from 'cors';
 import express, { json, NextFunction, Request, Response, urlencoded } from 'express';
 import helmet from 'helmet';
 import createError from 'http-errors';
-import path from 'path';
+import { join } from 'path';
 import favicon from 'serve-favicon';
 
 import CONSTANTS from './constants';
@@ -18,7 +18,7 @@ const app = express();
 // Middlewares
 app.use(cors());
 app.use(helmet());
-app.use(favicon(path.join(__dirname, '..', 'public', 'favicon.ico')));
+app.use(favicon(join(__dirname, '..', 'public', 'favicon.ico')));
 app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(LogMiddleware.logging);
