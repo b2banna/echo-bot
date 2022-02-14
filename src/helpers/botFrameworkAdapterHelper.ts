@@ -5,9 +5,9 @@ const settings: BotFrameworkAdapterSettings = {
   appPassword: process.env.MicrosoftAppPassword
 }
 
-export const botFrameworkAdapter = new BotFrameworkAdapter(settings);
+export const adapter = new BotFrameworkAdapter(settings);
 
-botFrameworkAdapter.onTurnError = async (context: TurnContext, error: Error) => {
+adapter.onTurnError = async (context: TurnContext, error: Error) => {
   console.error(`\n [onTurnError] unhandled error: ${error}`);
   console.log('****** error print from bot *********', error);
   await context.sendTraceActivity(
