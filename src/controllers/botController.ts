@@ -1,5 +1,6 @@
-import { ConversationReference, TurnContext } from 'botbuilder';
+import { ConversationReference, ConversationState, MemoryStorage, TurnContext, UserState } from 'botbuilder';
 import { NextFunction, Request, Response } from 'express';
+import { UserProfileDialog } from '../dialogs/userProfileDialog';
 
 import { adapter } from '../helpers/botFrameworkAdapterHelper';
 import { BotService } from '../services/botService';
@@ -9,7 +10,15 @@ export default class BotController {
   private _botService: BotService;
 
   constructor() {
-    this._botService = new BotService(conversationReferences);
+    const memoryStorage = new MemoryStorage();
+
+    // Create conversation state with in-memory storage provider.
+    const conversationState = new ConversationState(memoryStorage);
+    const userState = new UserState(memoryStorage);
+
+    // Create the main dialog.
+    const dialog = new UserProfileDialog(userState);
+    this._botService = new BotService(conversationReferences, conversationState, userState, dialog);
   }
 
   async messageHandler(req: Request, res: Response, _next: NextFunction): Promise<void> {
